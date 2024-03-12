@@ -1,4 +1,4 @@
-import { MySQLRepository } from "./ports/mysqlRepository";
+import { MySQLRepository } from "./ports/MySQLRepository";
 
 import { CreateLogService } from "../application/services/CreateLogService";
 
