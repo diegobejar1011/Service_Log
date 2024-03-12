@@ -1,9 +1,9 @@
-import { DatabaseRepository } from "../domain/repositories/DatabaseRepository";
-import { LogReq, LogRes } from "../domain/entities";
+import { DatabaseRepository } from "../../domain/repositories/DatabaseRepository";
+import { LogReq, LogRes } from "../../domain/entities";
 
 export class CreateLogService {
-    constructor(private databaseRepository: DatabaseRepository) {}
-    async execute(log: LogReq): Promise<LogRes> {
+    constructor(private readonly databaseRepository: DatabaseRepository) {}
+     async execute(log: LogReq): Promise<LogRes> {
         try {
             //Conseguir los paramteros registrados por el usuario
             const { temperature, humidity , lightness } = await this.databaseRepository.getParams(log.id_habitat);
