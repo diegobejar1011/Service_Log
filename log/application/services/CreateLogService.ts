@@ -1,8 +1,10 @@
 import { DatabaseRepository } from "../../domain/repositories/DatabaseRepository";
 import { LogReq, LogRes } from "../../domain/entities";
+import { SendMessageService } from "../../../broker/application/SendMessage";
+import { QueueName } from "../../../broker/domain/entities";
 
 export class CreateLogService {
-    constructor(private readonly databaseRepository: DatabaseRepository) {}
+    constructor(private readonly databaseRepository: DatabaseRepository, private readonly sendMessageService: SendMessageService) {}
      async execute(log: LogReq): Promise<LogRes> {
         try {
             //Conseguir los paramteros registrados por el usuario
@@ -24,6 +26,7 @@ export class CreateLogService {
 
             //Guardar el nuevo log
             await this.databaseRepository.create(logCreate);
+            await this.sendMessageService.execute(QueueName.NOTIFICATION, logCreate);
             
             return logCreate;
         } catch (error : any) {

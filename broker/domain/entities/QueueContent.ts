@@ -1,3 +1,3 @@
-import { Log } from "../../../log/domain/entities";
+import { LogRes} from "../../../log/domain/entities";
 
-export type QueueContent = Log;
+export type QueueContent = LogRes;
