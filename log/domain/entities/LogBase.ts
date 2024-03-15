@@ -1,8 +1,9 @@
 export interface Log {
-    id: number; 
-    id_habitat: number; 
+    id_habitat: string; 
     temperature: number;
+    noteTemperature: string;
     humidity: number;
-    lightness: number;
+    noteHumidity: string;
+    movement: boolean
     note: string;
 }

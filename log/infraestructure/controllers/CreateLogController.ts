@@ -9,6 +9,7 @@ export class CreateLogController {
             await this.logService.execute(log);
             return res.status(201).send('Created');
         } catch (error : any) {
+            console.log(error.message);
             return res.status(500).send(error);
         }
     }

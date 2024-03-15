@@ -1,7 +1,8 @@
 export interface LogRes {
+    // id: string;
     id_habitat: string; 
-    temperature: number;
-    humidity: number;
-    lightness: number;
+    noteTemperature: string;
+    noteHumidity: string;
+    movement: boolean;
     note: string;
 }
