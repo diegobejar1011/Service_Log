@@ -6,7 +6,7 @@ export class GetLogController {
     async execute(req: Request, res: Response){
         try {
             const logs = await this.getLogService.execute();
-            return res.status(200).send(logs);
+            return res.status(200).json(logs);
         } catch (error) {
             return res.status(500).send(error);
         }

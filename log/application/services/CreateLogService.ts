@@ -7,51 +7,54 @@ export class CreateLogService {
     constructor(private readonly databaseRepository: DatabaseRepository, private readonly sendMessageService: SendMessageService) {}
      async execute(log: LogReq): Promise<Log> {
         try {
-            //Conseguir los paramteros registrados por el usuario
-            const { temperature, humidity , movement } = await this.databaseRepository.getParams(log.id_habitat);
+
+            const { temperature, humidity } = await this.databaseRepository.getParams(log.id_habitat);
 
             //Validar los parametros sensados con los registradps
-            const noteTemperature = this.validateParams(temperature, log.temperature);
-            const noteHumidity = this.validateParams(humidity, log.humidity);
-
-            /*
-                Traer la hora de la ultimo log que registro movimiento
-                Traer el tiempo que especifico el usuario 
-                Sumar ambos valores para conseguir la hora en que se revisará el movimiento 
-
-                Guardar ese valor para al recibir una notificación con esa hora, verificar si hubo movimiento 
-                Si no hubo movimiento, enviar notificación
-            */ 
+            const TemperatureCalculation = this.validateParams(temperature, log.temperature);
+            const HumidityCalculation = this.validateParams(humidity, log.humidity);
+            
+            //Parseo
+            const noteTemperature = `${Math.round(TemperatureCalculation)}%`;
+            const noteHumidity = `${Math.round(HumidityCalculation)}%`;
 
             //Construir porcentaje final
-            const note = `${Math.round((noteTemperature + noteHumidity )/ 2)}%`;
-
+            const note = `${Math.round((TemperatureCalculation + HumidityCalculation )/ 2)}%`;
 
             //Construir el nuevo log para guardar en la base de datos
             const logCreate : Log = {
                 id_habitat: log.id_habitat,
                 temperature: log.temperature,
                 humidity: log.humidity,
-                noteTemperature: `${Math.round(noteTemperature)}%`,
-                noteHumidity: `${Math.round(noteHumidity)}%`,
+                noteTemperature: noteTemperature,
+                noteHumidity: noteHumidity,
                 movement: log.movement,
-                note: note
+                note: note,
+                record_at: new Date(log.record_at)
             }
 
-            //Construir el log para la notificacion 
-            const logNotification : LogRes = {
-                id_habitat: log.id_habitat,
-                noteTemperature: noteTemperature.toString(),
-                noteHumidity: noteHumidity.toString(),
-                movement: log.movement,
-                note: note
-            }
+            
 
             //Guardar el nuevo log
-            await this.databaseRepository.create(logCreate);
-            //await this.sendMessageService.execute(QueueName.NOTIFICATION, logNotification);
+            const id_habitat = await this.databaseRepository.create(logCreate);
+
+            //Construir el log para la notificacion 
+
+            const logNotification : LogRes = {
+                id: id_habitat,
+                id_habitat: log.id_habitat,
+                noteTemperature: noteTemperature,
+                noteHumidity: noteHumidity,
+                movement: log.movement,
+                note: note, 
+                record_at: new Date(log.record_at)
+            } 
+
+            //Enviar el log como notification
+            // await this.sendMessageService.execute(QueueName.NOTIFICATION, logNotification);
             
             return logCreate;
+
         } catch (error : any) {
             throw new Error(error);
         }
@@ -60,4 +63,5 @@ export class CreateLogService {
     private validateParams(stored: number, record: number) : number {
             return (record * 100) / stored;
     }
+
 }

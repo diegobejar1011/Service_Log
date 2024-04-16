@@ -3,11 +3,12 @@ import { LogReq, LogRes, Log} from "../../domain/entities";
 import { DatabaseRepository } from "../../domain/repositories/DatabaseRepository";
 
 export class MySQLRepository implements DatabaseRepository {
-    async create(log: Log): Promise<void> {
+    async create(log: Log): Promise<number> {
         try {
-            const { id_habitat, temperature, noteTemperature, humidity, noteHumidity, movement, note } = log;
-            const query = 'INSERT INTO log (id, id_habitat, temperature, noteTemperature, humidity, noteHumidity, movement, note)  VALUES (UUID(), ?, ?, ?, ?, ?, ?, ?)';
-            await db.execute(query, [id_habitat, temperature, noteTemperature, humidity, noteHumidity, movement, note]);
+            const { id_habitat, temperature, noteTemperature, humidity, noteHumidity, movement, note, record_at } = log;
+            const query = 'INSERT INTO logs (id_habitat, temperature, noteTemperature, humidity, noteHumidity, movement, note, record_at)  VALUES ( ?, ?, ?, ?, ?, ?, ?, ?)';
+            const result : any = await db.execute(query, [id_habitat, temperature, noteTemperature, humidity, noteHumidity, movement, note, record_at]);
+            return result[0].insertId;
         } catch (error : any) {
             throw new Error(error)
         }
@@ -15,7 +16,7 @@ export class MySQLRepository implements DatabaseRepository {
 
     async get(): Promise<LogRes[]> {
         try {
-            const query = 'SELECT id_habitat, noteTemperature, noteHumidity, movement, note FROM log';
+            const query = 'SELECT id, id_habitat, noteTemperature, noteHumidity, movement, note, record_at FROM logs ORDER BY record_at DESC';
             const [rows] : any = await db.execute(query);
             return rows;
         } catch (error : any) {
@@ -23,10 +24,20 @@ export class MySQLRepository implements DatabaseRepository {
         }
     }
 
-    async getParams(id: string): Promise<LogReq> {
+    async getParams(id: number): Promise<Log> {
         try {
-            const query = 'SELECT id, temperature, humidity, movement FROM habitat WHERE id = ?';
+            const query = 'SELECT id, temperature, humidity, interval_review FROM habitats WHERE id = ?';
             const [row] : any = await db.execute(query,[id]);
+            return row[0];
+        } catch (error : any) {
+            throw new Error(error);
+        }
+    }
+
+    async getLastLog(): Promise<LogRes> {
+        try {
+            const query = 'SELECT id, id_habitat, record_at FROM logs ORDER BY created_at DESC LIMIT 1';
+            const [row] : any = await db.execute(query);
             return row[0];
         } catch (error : any) {
             throw new Error(error);
