@@ -12,7 +12,7 @@ export class CreateLogController {
             return res.status(201).json('Created');
         } catch (error : any) {
             console.log(error.message);
-            return res.status(500).send(error);
+            return res.status(500).json(error);
         }
     }
 }

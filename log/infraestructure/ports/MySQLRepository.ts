@@ -6,11 +6,11 @@ export class MySQLRepository implements DatabaseRepository {
     async create(log: Log): Promise<number> {
         try {
             const { id_habitat, temperature, noteTemperature, humidity, noteHumidity, movement, note, record_at } = log;
-            const query = 'INSERT INTO logs (id_habitat, temperature, noteTemperature, humidity, noteHumidity, movement, note, record_at)  VALUES ( ?, ?, ?, ?, ?, ?, ?, ?)';
+            const query = 'INSERT INTO logs (id_habitat, temperature, noteTemperature, humidity, noteHumidity, movement, note, record_at)  VALUES (?, ?, ?, ?, ?, ?, ?, ?)';
             const result : any = await db.execute(query, [id_habitat, temperature, noteTemperature, humidity, noteHumidity, movement, note, record_at]);
             return result[0].insertId;
         } catch (error : any) {
-            throw new Error(error)
+            throw new Error(error.message)
         }
     }
 
@@ -20,7 +20,7 @@ export class MySQLRepository implements DatabaseRepository {
             const [rows] : any = await db.execute(query);
             return rows;
         } catch (error : any) {
-            throw new Error(error)
+            throw new Error(error.message)
         }
     }
 
@@ -30,7 +30,7 @@ export class MySQLRepository implements DatabaseRepository {
             const [row] : any = await db.execute(query,[id]);
             return row[0];
         } catch (error : any) {
-            throw new Error(error);
+            throw new Error(error.message);
         }
     }
 
@@ -40,7 +40,7 @@ export class MySQLRepository implements DatabaseRepository {
             const [row] : any = await db.execute(query);
             return row[0];
         } catch (error : any) {
-            throw new Error(error);
+            throw new Error(error.message);
         }
     }
 }

@@ -8,7 +8,7 @@ export class GetLogController {
             const logs = await this.getLogService.execute();
             return res.status(200).json(logs);
         } catch (error) {
-            return res.status(500).send(error);
+            return res.status(500).json(error);
         }
     }
 }

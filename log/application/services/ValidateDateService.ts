@@ -14,7 +14,7 @@ export class ValidateDateService {
         const hoursToAdd = interval_review;
 
         const updatedDate = new Date(
-          lastDate.getTime() + hoursToAdd * 60 * 60 * 1000
+          lastDate.getTime() + hoursToAdd * 60 * 1000
         );
         const hoursVerified = updatedDate.getHours().toString();
         const minutesVerified = updatedDate.getMinutes().toString();
@@ -25,7 +25,7 @@ export class ValidateDateService {
         const TimeVerified = `${hoursVerified}:${minutesVerified.toString().padStart(2, '0')}`; 
         const TimeLog = `${logHours}:${logMinutes.toString().padStart(2, '0')}`; 
 
-        if(!(TimeLog == TimeVerified)){
+        if(!(logMinutes == minutesVerified)){
             throw new Error('Log in time out');
         }
       }
