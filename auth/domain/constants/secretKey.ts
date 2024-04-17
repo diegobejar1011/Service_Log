@@ -2,4 +2,4 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
-export const JWT_SECRET_KEY = 'Authorization';
+export const JWT_SECRET_KEY = 'Authentication';
