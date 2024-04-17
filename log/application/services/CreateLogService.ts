@@ -51,7 +51,7 @@ export class CreateLogService {
             } 
 
             //Enviar el log como notification
-            // await this.sendMessageService.execute(QueueName.NOTIFICATION, logNotification);
+            await this.sendMessageService.execute(QueueName.NOTIFICATION, logNotification);
             
             return logCreate;
 
